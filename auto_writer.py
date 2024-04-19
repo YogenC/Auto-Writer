@@ -5,7 +5,7 @@ import threading
 from ttkthemes import ThemedTk
 import time
 import os
-
+import sys
 class TypingSimulator:
     def __init__(self, master):
         self.master = master
@@ -59,7 +59,20 @@ class TypingSimulator:
         self.typing_thread = None
         
         self.pause_index = 0
-        
+
+
+
+
+    def resource_path(relative_path):
+        """ Get absolute path to resource, works for dev and for PyInstaller """
+        try:
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+        return os.path.join(base_path, relative_path)
+   
+    
     def set_theme(self):
         self.style = ttk.Style()
         self.style.theme_use("black")  # Change the theme here
@@ -172,7 +185,6 @@ class TypingSimulator:
         self.toggle_button.config(text="Start Typing")
 
 
-
     def on_press(self, key):
         if key in self.hotkey_combination:
             self.hotkey_pressed.add(key)
@@ -188,7 +200,6 @@ class TypingSimulator:
             listener.join()
 def main():
     root = ThemedTk(theme="adapta")
-    root.iconbitmap(default="C:/vee/auto_writer/favicon.ico")
     def on_close():
         print("on_close called")
         root.destroy()
@@ -202,3 +213,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
