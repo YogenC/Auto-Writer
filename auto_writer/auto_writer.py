@@ -194,7 +194,7 @@ def main():
         root.destroy()
         os._exit(0)
         
-
+    root.wm_attributes("-topmost", 1)
     root.protocol("WM_DELETE_WINDOW", on_close)
     root.geometry("530x440")  # Set default window size
     app = TypingSimulator(root)
