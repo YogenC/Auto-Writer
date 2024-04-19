@@ -17,6 +17,8 @@ class TypingSimulator:
         self.write_words = False  # Track if word mode is enabled
         self.toggle_word_mode_var = tk.IntVar()  # Variable to track the state of the checkbox
 
+        
+
         # Create a frame to contain all the widgets
         self.container = ttk.Frame(master)
         self.container.pack(fill=tk.BOTH, expand=True)  # Fill the entire window and expand with it
@@ -186,13 +188,13 @@ class TypingSimulator:
             listener.join()
 def main():
     root = ThemedTk(theme="adapta")
-
+    root.iconbitmap(default="C:/vee/auto_writer/favicon.ico")
     def on_close():
         print("on_close called")
         root.destroy()
         os._exit(0)
         
-
+    root.wm_attributes("-topmost", 1)
     root.protocol("WM_DELETE_WINDOW", on_close)
     root.geometry("530x440")  # Set default window size
     app = TypingSimulator(root)
