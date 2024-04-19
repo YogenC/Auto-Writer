@@ -22,30 +22,30 @@ class TypingSimulator:
         self.container.pack(fill=tk.BOTH, expand=True)  # Fill the entire window and expand with it
 
         self.label = ttk.Label(self.container, text="Enter text:")
-        self.label.grid(row=0, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
-        
+        self.label.pack(pady=(10, 0))
+
         self.text_entry = tk.Text(self.container, width=50, height=10, font=('Georgia', 12), bg='lightgray', fg='black', borderwidth=2, relief="groove")
-        self.text_entry.grid(row=1, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
-        
+        self.text_entry.pack(padx=10, pady=(0, 10))
+
         self.speed_label = ttk.Label(self.container, text="Speed:")
-        self.speed_label.grid(row=2, column=0, padx=10, pady=10, sticky="nsew")
-        
+        self.speed_label.pack(pady=(10, 0))
+
         self.speed_slider = ttk.Scale(self.container, from_=0.1, to=1.0, length=200, orient="horizontal", command=self.update_speed_label)
         self.speed_slider.set(0.5)  # Default speed
-        self.speed_slider.grid(row=2, column=1, padx=10, pady=10, sticky="nsew")
-        
+        self.speed_slider.pack(padx=10, pady=(0, 10))
+
         self.speed_value_label = ttk.Label(self.container, text=f"Current Speed: {self.speed_slider.get():.2f}")
-        self.speed_value_label.grid(row=3, column=1, padx=10, pady=10, sticky="nsew")
-        
+        self.speed_value_label.pack(padx=10, pady=(0, 10))
+
         self.toggle_button = ttk.Button(self.container, text="Start Typing", command=self.toggle_typing)
-        self.toggle_button.grid(row=4, column=0, padx=10, pady=10, sticky="nsew")
+        self.toggle_button.pack(padx=10, pady=(0, 10))
 
         self.clear_button = ttk.Button(self.container, text="Clear Text", command=self.clear_text)
-        self.clear_button.grid(row=4, column=1, padx=10, pady=10, sticky="nsew")
-         
+        self.clear_button.pack(padx=10, pady=(0, 10))
+
         self.toggle_word_mode_var = tk.BooleanVar(value=False)
         self.toggle_word_mode_checkbox = ttk.Checkbutton(self.container, text="Write Words", variable=self.toggle_word_mode_var)
-        self.toggle_word_mode_checkbox.grid(row=5, column=0, columnspan=2, padx=10, pady=10, sticky="nsew")
+        self.toggle_word_mode_checkbox.pack(padx=10, pady=(0, 10))
 
         self.hotkey_combination = {Key.ctrl_l, Key.alt_l, Key.space}
         self.hotkey_pressed = set()
@@ -57,8 +57,11 @@ class TypingSimulator:
         self.typing_thread = None
         
         self.pause_index = 0
-
-
+        
+    def set_theme(self):
+        self.style = ttk.Style()
+        self.style.theme_use("black")  # Change the theme here
+        
     def clear_text(self):
         # Clear the text widget
         self.text_entry.delete("1.0", tk.END)
@@ -75,18 +78,12 @@ class TypingSimulator:
         if self.typing_thread and self.typing_thread.is_alive():
             self.typing_thread.join()
         if self.listener_thread and self.listener_thread.is_alive():
-            self.listener_thread.join()
+            self.listener_thread.join()      
 
-         
-        
-    def set_theme(self):
-        self.style = ttk.Style()
-        self.style.theme_use("scidblue")  # Change the theme here
-        
-    def update_speed_label(self, value):
-        rounded_speed = round(float(value), 2)
-        self.speed_value_label.config(text=f"Current Speed: {rounded_speed}")
-        
+    def update_speed_label(self, speed):
+        rounded_speed = round(float(speed), 2)
+        if hasattr(self, 'speed_value_label'):
+            self.speed_value_label.config(text=f"Current Speed: {rounded_speed}")
 
 
 
