@@ -45,6 +45,9 @@ class TypingSimulator:
         self.clear_button = ttk.Button(self.container, text="Clear Text", command=self.clear_text)
         self.clear_button.pack(padx=10, pady=(0, 10))
 
+        self.toggle_button_reset = ttk.Button(self.container, text="Reset index", command=self.reset_index)
+        self.toggle_button_reset.pack(padx=10, pady=(0, 10))
+
         self.toggle_word_mode_var = tk.BooleanVar(value=False)
         self.toggle_word_mode_checkbox = ttk.Checkbutton(self.container, text="Write Words", variable=self.toggle_word_mode_var)
         self.toggle_word_mode_checkbox.pack(padx=10, pady=(0, 10))
@@ -62,7 +65,13 @@ class TypingSimulator:
 
 
 
-
+    def reset_index(self):
+        self.pause_index = 0
+        self.paused_index = 0
+        self.word_pause_index = 0
+        self.word_paused_index = 0
+        self.is_typing = False
+        self.toggle_button.config(text="Start Typing")
     def resource_path(relative_path):
         """ Get absolute path to resource, works for dev and for PyInstaller """
         try:
@@ -130,12 +139,12 @@ class TypingSimulator:
             else:
                 self.toggle_button.config(text="Resume")
                 # Store the pause index
-                self.paused_index = self.pause_index
+                self.paused_index = self.pause_index +1
 
     def type_text(self, text_to_type):
         if hasattr(self, 'paused_index'):
             # If there's a paused index, start typing from there
-            self.pause_index = self.paused_index +1
+            self.pause_index = self.paused_index
             del self.paused_index  # Clear the paused index
         else:
             self.pause_index = 0  # Reset pause_index before processing
@@ -145,7 +154,7 @@ class TypingSimulator:
         while self.pause_index < text_length:
             if not self.is_typing:
                 return
-            char = text_to_type[self.pause_index - 1]
+            char = text_to_type[self.pause_index]
             self.keyboard.type(char) 
             self.master.update()
             time.sleep(self.speed_slider.get())
