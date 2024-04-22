@@ -72,6 +72,8 @@ class TypingSimulator:
         self.word_paused_index = 0
         self.is_typing = False
         self.toggle_button.config(text="Start Typing")
+
+        
     def resource_path(relative_path):
         """ Get absolute path to resource, works for dev and for PyInstaller """
         try:
