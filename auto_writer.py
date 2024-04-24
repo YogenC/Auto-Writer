@@ -6,6 +6,8 @@ from ttkthemes import ThemedTk
 import time
 import os
 import sys
+import random
+
 class TypingSimulator:
     def __init__(self, master):
         self.master = master
@@ -16,7 +18,8 @@ class TypingSimulator:
         self.is_typing = False  # Track if typing is in progress
         self.write_words = False  # Track if word mode is enabled
         self.toggle_word_mode_var = tk.IntVar()  # Variable to track the state of the checkbox
-
+        self.last_pause_time = time.time()
+        self.toggle_slow_mode_var = tk.IntVar()
         
 
         # Create a frame to contain all the widgets
@@ -39,6 +42,7 @@ class TypingSimulator:
         self.speed_value_label = ttk.Label(self.container, text=f"Current Speed: {self.speed_slider.get():.2f}")
         self.speed_value_label.pack(padx=10, pady=(0, 10))
 
+
         self.toggle_button = ttk.Button(self.container, text="Start Typing", command=self.toggle_typing)
         self.toggle_button.pack(padx=10, pady=(0, 10))
 
@@ -51,6 +55,10 @@ class TypingSimulator:
         self.toggle_word_mode_var = tk.BooleanVar(value=False)
         self.toggle_word_mode_checkbox = ttk.Checkbutton(self.container, text="Write Words", variable=self.toggle_word_mode_var)
         self.toggle_word_mode_checkbox.pack(padx=10, pady=(0, 10))
+
+        self.toggle_slow_mode_var = tk.IntVar()
+        self.toggle_slow_mode_checkbox = ttk.Checkbutton(self.container, text="Human Mode", variable=self.toggle_slow_mode_var)
+        self.toggle_slow_mode_checkbox.pack(padx=10, pady=(0, 10))
 
         self.hotkey_combination = {Key.ctrl_l, Key.alt_l, Key.space}
         self.hotkey_pressed = set()
@@ -159,8 +167,15 @@ class TypingSimulator:
             char = text_to_type[self.pause_index]
             self.keyboard.type(char) 
             self.master.update()
-            time.sleep(self.speed_slider.get())
 
+            if self.toggle_slow_mode_var.get():  # Check if the checkbox is checked
+                # Pause at random intervals between 2 and 5 seconds while typing
+                if time.time() - self.last_pause_time >= 5:
+                    pause_duration = random.uniform(2, 5)
+                    time.sleep(pause_duration)
+                    self.last_pause_time = time.time()
+
+            time.sleep(self.speed_slider.get())
             self.pause_index += 1  # Move to the next character
 
         # If it reaches the end of the text, reset to the beginning
@@ -179,22 +194,22 @@ class TypingSimulator:
         words = text_to_type.split()  # Split the text into words
         word_count = len(words)
         time.sleep(2)  # Wait for 2 seconds before starting to type
-
         while self.word_pause_index < word_count:
             if not self.is_typing:
                 return
             word = words[self.word_pause_index]
             self.keyboard.type(word + " ")  # Add space after typing the word
             self.master.update()
+
+            if self.toggle_slow_mode_var.get():  # Check if the checkbox is checked
+                # Pause at random intervals between 2 and 5 seconds while typing
+                if time.time() - self.last_pause_time >= 5:
+                    pause_duration = random.uniform(2, 5)
+                    time.sleep(pause_duration)
+                    self.last_pause_time = time.time()
+
             time.sleep(self.speed_slider.get())
-
             self.word_pause_index += 1  # Move to the next word
-
-        # If it reaches the end of the text, reset to the beginning
-        self.word_pause_index = 0
-        self.is_typing = False
-        self.toggle_button.config(text="Start Typing")
-
 
     def on_press(self, key):
         if key in self.hotkey_combination:
@@ -218,7 +233,7 @@ def main():
         
     root.wm_attributes("-topmost", 1)
     root.protocol("WM_DELETE_WINDOW", on_close)
-    root.geometry("530x440")
+    root.geometry("530x460")
     app = TypingSimulator(root)
     root.mainloop()
 
